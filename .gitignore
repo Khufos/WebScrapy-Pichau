@@ -1,0 +1,20 @@
+# Ignorar virtual environment
+venv/
+.env/
+.env.bak/
+.envrc
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Arquivos Python compilados
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Logs e caches
+*.log
+.cache/

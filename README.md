@@ -1,77 +1,89 @@
-Claro! Aqui está uma sugestão de **descrição para o seu repositório GitHub**, com foco em clareza e profissionalismo, ideal para o `README.md`:
+Perfeito! Você já tem a estrutura de projeto bem organizada no VS Code. Aqui vai uma sugestão para o conteúdo completo do seu `README.md`, pronto para colar:
 
 ---
 
-# 🖥️ Pichau Scraper com Selenium + Undetected ChromeDriver
+````markdown
+# 🖥️ Pichau Web Scraper - Selenium + Undetected ChromeDriver
 
-Este projeto é um **web scraper automatizado** desenvolvido em Python, que coleta informações detalhadas de computadores da loja [Pichau](https://www.pichau.com.br/computadores/pichau-gamer), utilizando Selenium com suporte a navegação dinâmica e proteção anti-bot (via `undetected_chromedriver`).
+Este projeto é um **web scraper automatizado** desenvolvido em Python. Ele coleta dados de computadores da seção **Pichau Gamer** no site da [Pichau Informática](https://www.pichau.com.br/), acessando páginas, extraindo informações dos produtos e salvando tudo em arquivos CSV e JSON.
 
-## 🚀 Funcionalidades
+## ✅ Funcionalidades
 
-* Acessa automaticamente todas as páginas da seção "Pichau Gamer"
-* Captura dados como:
+- Acessa automaticamente todas as páginas de produtos.
+- Coleta informações como:
+  - SKU e disponibilidade
+  - Preço normal, à vista (Pix) e parcelado
+  - Componentes: processador, placa-mãe, memória, GPU, fonte, etc.
+- Exporta dados:
+  - Para `pcs_2.csv` (planilha)
+  - Para `pcs.json` (formato estruturado)
 
-  * SKU
-  * Disponibilidade
-  * Preço original, à vista no Pix e parcelado
-  * Configurações do PC: processador, placa-mãe, memória, placa de vídeo, etc.
-* Salva os resultados:
+## 🧪 Tecnologias usadas
 
-  * 📄 Em um arquivo `.csv` para fácil visualização
-  * 📦 Em um arquivo `.json` para uso programático
+- Python 3.x
+- Selenium
+- undetected-chromedriver
+- Módulos padrão: `csv`, `json`, `time`
 
-## 🧰 Tecnologias Utilizadas
+## 🛠️ Instalação
 
-* [Python 3.x](https://www.python.org/)
-* [Selenium](https://pypi.org/project/selenium/)
-* [undetected-chromedriver](https://pypi.org/project/undetected-chromedriver/)
-* Módulos padrão: `csv`, `json`, `time`
+1. Clone o repositório:
 
-## 📦 Instalação
+```bash
+git clone https://github.com/seu-usuario/webscrapt-items.git
+cd webscrapt-items
+````
 
-1. Clone este repositório:
+2. Crie e ative um ambiente virtual:
 
-   ```bash
-   git clone https://github.com/seu-usuario/pichau-scraper.git
-   cd pichau-scraper
-   ```
-
-2. Crie e ative um ambiente virtual (opcional, mas recomendado):
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # ou venv\Scripts\activate no Windows
-   ```
+```bash
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+```
 
 3. Instale as dependências:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-## ▶️ Como usar
+## ▶️ Como executar
 
 Execute o script principal:
 
 ```bash
-python scraper.py
+python main.py
 ```
 
-> O navegador abrirá automaticamente e navegará pelas páginas, coletando e salvando os dados.
+> O navegador será iniciado automaticamente, e o scraper começará a coletar os dados.
 
-## 📁 Saídas
+## 📁 Estrutura do projeto
 
-* `pcs_2.csv`: planilha com os dados dos PCs
-* `pcs.json`: versão JSON com a mesma informação estruturada
+```
+webscrapt-items/
+├── csv do codigo/           # Pasta onde os arquivos gerados podem ser salvos
+├── venv/                    # Ambiente virtual (ignorado pelo Git)
+├── main.py                  # Código principal do scraper
+├── requirements.txt         # Bibliotecas necessárias
+├── .gitignore               # Arquivos/pastas ignorados pelo Git
+└── README.md                # Este arquivo
+```
 
 ## ⚠️ Observações
 
-* O scraper utiliza navegação real com o Chrome — portanto, pode ser detectado pela loja se usado de forma abusiva.
-* O site pode mudar seu layout com o tempo. Isso pode quebrar o seletor dos elementos. Em caso de erro, revise os seletores `CSS` e `className` no código.
+* O scraper usa navegação real via Chrome, então pode ser detectado se usado com frequência.
+* Pode ser necessário atualizar os seletores (`class` ou `CSS`) se o layout do site mudar.
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a **MIT License**. Sinta-se livre para usar, modificar e compartilhar.
+Este projeto é de código aberto, sob a licença MIT.
+
+```
 
 ---
 
+Se quiser, posso salvar esse conteúdo automaticamente no seu `README.md` atual. Deseja que eu faça isso?
+```
