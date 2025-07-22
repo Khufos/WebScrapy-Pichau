@@ -1,55 +1,66 @@
+import os
+import csv
+import json
+import time
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 import undetected_chromedriver as uc
-import csv
-import time
-import json
 
 # ========== CONFIGURA NAVEGADOR ==========
 options = uc.ChromeOptions()
-# options.add_argument('--headless=new')
 options.add_argument('--disable-gpu')
 options.add_argument('--window-size=1920,1080')
 driver = uc.Chrome(options=options)
 
-# ========== ACESSA PÁGINA ==========
-url = "https://www.pichau.com.br/computadores/pichau-gamer"
-# url = "https://www.pichau.com.br/computadores/pichau-gamer?page=18"
-driver.get(url)
+# ========== CONTROLE DE PROGRESSO ==========
+progress_file = 'progress.json'
+if os.path.exists(progress_file):
+    with open(progress_file, 'r') as f:
+        progresso = json.load(f)
+        pagina = progresso.get('pagina', 1)
+        skus_existentes = set(progresso.get('skus', []))
+else:
+    pagina = 1
+    skus_existentes = set()
 
+# ========== INICIALIZA CSV ==========
+csv_path = 'pcs.csv'
+csv_existe = os.path.exists(csv_path)
+csvfile = open(csv_path, 'a', newline='', encoding='utf-8')
+writer = csv.writer(csvfile)
+
+if not csv_existe:
+    writer.writerow([
+        "SKU",
+        "Disponibilidade",
+        "Preço de",
+        "Preço à vista no Pix",
+        "Parcelamento no cartão",
+        "Processador",
+        "Cooler",
+        "Placa Mãe",
+        "Memória",
+        "Armazenamento",
+        "Placa de Vídeo",
+        "Fonte",
+        "Gabinete",
+        "Cabo de Vídeo",
+        "Cabo de Força",
+        "Monitor",
+        "Kit Periféricos"
+    ])
+
+# ========== NAVEGAÇÃO ==========
+url_base = "https://www.pichau.com.br/computadores/pichau-gamer?page="
 wait = WebDriverWait(driver, 15)
 dados = []
 NO_ITEM = "Sem item no momento"
 
-# ========== INICIALIZA CSV ==========
-csvfile = open('pcs.csv', 'w', newline='', encoding='utf-8')
-writer = csv.writer(csvfile)
-writer.writerow([
-    "SKU",
-    "Disponibilidade",
-    "Preço de",
-    "Preço à vista no Pix",
-    "Parcelamento no cartão",
-    "Processador",
-    "Cooler",
-    "Placa Mãe",
-    "Memória",
-    "Armazenamento",
-    "Placa de Vídeo",
-    "Fonte",
-    "Gabinete",
-    "Cabo de Vídeo",
-    "Cabo de Força",
-    "Monitor",
-    "Kit Periféricos"
-])
-
-# ========== LOOP DE PAGINAÇÃO ==========
-pagina = 1
 while True:
     print(f"\n📄 Página {pagina}...")
+    driver.get(url_base + str(pagina))
 
     try:
         computadores = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.MuiGrid2-grid-xs-6')))
@@ -57,7 +68,6 @@ while True:
         print("❌ Não foi possível carregar os computadores desta página.")
         break
 
-    # ========== LOOP NOS PRODUTOS ==========
     for i in range(len(computadores)):
         try:
             computadores = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.MuiGrid2-grid-xs-6')))
@@ -69,6 +79,12 @@ while True:
             spans = div_info.find_elements(By.TAG_NAME, 'span')
             disponibilidade = spans[0].text.strip()
             indice_etiqueta = spans[1].text.strip()
+
+            if indice_etiqueta in skus_existentes:
+                print(f"[{i+1}] Produto já processado (SKU: {indice_etiqueta}), pulando.")
+                driver.back()
+                time.sleep(1)
+                continue
 
             div_info_valores = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'mui-10zcgyp-mainWrapper')))
             valor_cortado = div_info_valores.find_element(By.CLASS_NAME, 'mui-1tsvxj0-dePor').text
@@ -90,43 +106,30 @@ while True:
                 except (IndexError, Exception):
                     return NO_ITEM
 
-            descricao_processador = get_text_from_item(0)
-            cooler = get_text_from_item(1)
-            placa_mae = get_text_from_item(2)
-            memoria = get_text_from_item(3)
-            armazenamento = get_text_from_item(4)
-            placa_de_video = get_text_from_item(5)
-            fonte = get_text_from_item(6)
-            gabinete = get_text_from_item(7)
-            cabo_video = get_text_from_item(8)
-            cabo_de_forca = get_text_from_item(9)
-            monitor = get_text_from_item(10)
-            kit_periferico = get_text_from_item(11)
-
-            print(f"[{i+1}] Produto capturado com sucesso.")
-
             linha = [
                 indice_etiqueta,
                 disponibilidade,
                 valor_limpo,
                 valor_avista_pix,
                 parcelas_cartao,
-                descricao_processador,
-                cooler,
-                placa_mae,
-                memoria,
-                armazenamento,
-                placa_de_video,
-                fonte,
-                gabinete,
-                cabo_video,
-                cabo_de_forca,
-                monitor,
-                kit_periferico
+                get_text_from_item(0),  # Processador
+                get_text_from_item(1),  # Cooler
+                get_text_from_item(2),  # Placa Mãe
+                get_text_from_item(3),  # Memória
+                get_text_from_item(4),  # Armazenamento
+                get_text_from_item(5),  # Placa de Vídeo
+                get_text_from_item(6),  # Fonte
+                get_text_from_item(7),  # Gabinete
+                get_text_from_item(8),  # Cabo de Vídeo
+                get_text_from_item(9),  # Cabo de Força
+                get_text_from_item(10), # Monitor
+                get_text_from_item(11)  # Kit Periféricos
             ]
 
+            writer.writerow(linha)
             dados.append(linha)
-            writer.writerow(linha)  # 🔥 Salva item no CSV imediatamente
+            skus_existentes.add(indice_etiqueta)
+            print(f"[{i+1}] Produto (SKU: {indice_etiqueta}) capturado com sucesso.")
 
             driver.back()
             time.sleep(2)
@@ -136,52 +139,23 @@ while True:
             driver.back()
             time.sleep(2)
 
-    # ========== TENTA IR PARA PRÓXIMA PÁGINA ==========
+    # Salva progresso a cada página
+    with open(progress_file, 'w', encoding='utf-8') as f:
+        json.dump({'pagina': pagina + 1, 'skus': list(skus_existentes)}, f)
+
     try:
         next_button = driver.find_element(By.CSS_SELECTOR, 'li button[aria-label="Go to next page"]')
-        classes = next_button.get_attribute("class")
-
-        if "Mui-disabled" in classes:
+        if "Mui-disabled" in next_button.get_attribute("class"):
             print("🚫 Última página alcançada.")
             break
         else:
-            next_button.click()
             pagina += 1
             time.sleep(3)
     except Exception as e:
         print(f"❌ Erro ao tentar avançar para próxima página: {e}")
         break
 
-# ========== SALVA JSON ==========
-json_dados = []
-for linha in dados:
-    json_dados.append({
-        "SKU": linha[0],
-        "Disponibilidade": linha[1],
-        "Preço de": linha[2],
-        "Preço à vista no Pix": linha[3],
-        "Parcelamento no cartão": linha[4],
-        "Processador": linha[5],
-        "Cooler": linha[6],
-        "Placa Mãe": linha[7],
-        "Memória": linha[8],
-        "Armazenamento": linha[9],
-        "Placa de Vídeo": linha[10],
-        "Fonte": linha[11],
-        "Gabinete": linha[12],
-        "Cabo de Vídeo": linha[13],
-        "Cabo de Força": linha[14],
-        "Monitor": linha[15],
-        "Kit Periféricos": linha[16]
-    })
-
-with open('pcs.json', 'w', encoding='utf-8') as f:
-    json.dump(json_dados, f, ensure_ascii=False, indent=2)
-
-print("\n✅ Arquivo 'pcs.json' salvo com sucesso!")
-
-# ========== FECHA ARQUIVO CSV ==========
+# Finaliza
 csvfile.close()
-print("✅ Arquivo 'pcs.csv' finalizado e salvo com sucesso!")
-
 driver.quit()
+print("✅ Scraping finalizado com sucesso.")
