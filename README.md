@@ -1,6 +1,4 @@
-Claro! Aqui está a versão da descrição **sem formatação Markdown**, apenas com texto simples como você pediu, no estilo típico do ChatGPT:
 
----
 
 🖥️ **Pichau Web Scraper - Selenium + Undetected ChromeDriver**
 
@@ -18,7 +16,7 @@ Este projeto é um web scraper automatizado desenvolvido em Python. Ele coleta d
   * Componentes: processador, placa-mãe, memória, GPU, fonte, etc.
 * Exporta os dados para dois arquivos:
 
-  * `pcs_2.csv` (planilha)
+  * `pcs.csv` (planilha)
   * `pcs.json` (formato estruturado)
 
 ---
