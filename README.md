@@ -1,6 +1,4 @@
-Claro! Aqui está a versão da descrição **sem formatação Markdown**, apenas com texto simples como você pediu, no estilo típico do ChatGPT:
 
----
 
 🖥️ **Pichau Web Scraper - Selenium + Undetected ChromeDriver**
 
